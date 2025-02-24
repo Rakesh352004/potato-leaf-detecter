@@ -5,7 +5,7 @@ from PIL import Image
 import os
 
 # Load the trained model
-model_path = "trained_plant_disease_model.keras"
+model_path = "https://drive.google.com/file/d/1em_4pDcMztrkxm1gH0WWmf9I8brKAzkj/view?usp=drive_link"
 model = tf.keras.models.load_model(model_path)
 
 # Define class labels for potato leaf diseases
