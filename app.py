@@ -3,6 +3,9 @@ import tensorflow as tf
 import numpy as np
 from PIL import Image
 import os
+import gdown
+
+file_id="1em_4pDcMztrkxm1gH0WWmf9I8brKAzkj"
 
 # Load the trained model
 model_path = "https://drive.google.com/file/d/1em_4pDcMztrkxm1gH0WWmf9I8brKAzkj/view?usp=drive_link"
