@@ -1,88 +1,56 @@
 import streamlit as st
 import tensorflow as tf
 import numpy as np
-from PIL import Image
-import os
 import gdown
+import os
 
-file_id="1em_4pDcMztrkxm1gH0WWmf9I8brKAzkj"
-url='https://drive.google.com/file/d/1em_4pDcMztrkxm1gH0WWmf9I8brKAzkj/view?usp=sharing'
-model_path='trained_plant_disease_model.keras'
+file_id = "1em_4pDcMztrkxm1gH0WWmf9I8brKAzkj"
+url = 'https://drive.google.com/file/d/1em_4pDcMztrkxm1gH0WWmf9I8brKAzkj/view?usp=sharing'
+model_path = "trained_plant_disease_model.keras"
 
 
 if not os.path.exists(model_path):
     st.warning("Downloading model from Google Drive...")
-    gdown.download(url, model_path,quiet=False)
-model = tf.keras.models.load_model(model_path)
+    gdown.download(url, model_path, quiet=False)
 
-# Define class labels for potato leaf diseases
-class_labels = ['Potato__Early_blight', 'Potato_Late_blight', 'Potato__healthy']
 
-# Custom CSS for styling
-st.markdown(
-    """
-    <style>
-        body, .stApp {
-            background-color: #D2B48C !important; /* Earthy brown */
-        }
-        .main {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-        }
-        .uploadedFile {
-            max-width: 400px;
-        }
-        img {
-            max-width: 300px; /* Smaller image size */
-            border-radius: 10px;
-        }
-        h1 {
-            text-align: center;
-            font-size: 28px;
-            font-weight: bold;
-        }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
+model_path = "trained_plant_disease_model.keras"
+def model_prediction(test_image):
+    model = tf.keras.models.load_model(model_path)
+    image = tf.keras.preprocessing.image.load_img(test_image,target_size=(128,128))
+    input_arr = tf.keras.preprocessing.image.img_to_array(image)
+    input_arr = np.array([input_arr]) #convert single image to batch
+    predictions = model.predict(input_arr)
+    return np.argmax(predictions) #return index of max element
 
-# Streamlit UI
-st.markdown("<h1>🥔 Potato Leaf Disease Classification</h1>", unsafe_allow_html=True)
-st.write("Upload an image of a potato leaf to classify its disease.")
+#Sidebar
+st.sidebar.title("Plant Disease Detection System for Sustainable Agriculture")
+app_mode = st.sidebar.selectbox("Select Page",["HOME","DISEASE RECOGNITION"])
+#app_mode = st.sidebar.selectbox("Select Page",["Home"," ","Disease Recognition"])
 
-# File uploader with smaller size
-uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "png", "jpeg"], key="file_uploader")
+# import Image from pillow to open images
+from PIL import Image
+img = Image.open("Diseases.png")
 
-if uploaded_file is not None:
-    # Open and display the uploaded image
-    image = Image.open(uploaded_file)
-    st.image(image, caption='Uploaded Image', use_container_width=False)
+# display image using streamlit
+# width is used to set the width of an image
+st.image(img)
+
+#Main Page
+if(app_mode=="HOME"):
+    st.markdown("<h1 style='text-align: center;'>Plant Disease Detection System for Sustainable Agriculture", unsafe_allow_html=True)
     
-    # Ensure image is in RGB mode
-    image = image.convert("RGB")
-    
-    # Preprocess the image
-    image = image.resize((128, 128))  # Resize to match model input size
-    image_array = np.array(image)  # Keep raw pixel values
-    image_array = np.expand_dims(image_array, axis=0)  # Add batch dimension
-    
-    # Make prediction
-    predictions = model.predict(image_array)
-    predicted_class = np.argmax(predictions, axis=1)[0]  # Get highest probability class
-    confidence = np.max(predictions)  # Get confidence score
-    
-    # Display prediction results
-    st.subheader("Prediction")
-    st.write(f"*Predicted Class:* {class_labels[predicted_class]}")
-    st.write(f"*Confidence:* {confidence:.2f}")
-    
-    # Display additional message based on prediction
-    if class_labels[predicted_class] == 'Potato___Early_blight':
-        st.warning("⚠ This leaf has Early Blight. Consider using fungicides and improving field management.")
-    elif class_labels[predicted_class] == 'Potato___Late_blight':
-        st.error("🚨 This leaf has Late Blight. Immediate action is needed to prevent crop loss!")
-    else:
-        st.success("✅ This potato leaf is healthy!")
+#Prediction Page
+elif(app_mode=="DISEASE RECOGNITION"):
+    st.header("Plant Disease Detection System for Sustainable Agriculture")
+    test_image = st.file_uploader("Choose an Image:")
+    if(st.button("Show Image")):
+        st.image(test_image,width=4,use_column_width=True)
+    #Predict button
+    if(st.button("Predict")):
+        st.snow()
+        st.write("Our Prediction")
+        result_index = model_prediction(test_image)
+        #Reading Labels
+        class_name = ['Potato___Early_blight', 'Potato___Late_blight', 'Potato___healthy']
+        st.success("Model is Predicting it's a {}".format(class_name[result_index]))
