@@ -6,9 +6,13 @@ import os
 import gdown
 
 file_id="1em_4pDcMztrkxm1gH0WWmf9I8brKAzkj"
+url='https://drive.google.com/file/d/1em_4pDcMztrkxm1gH0WWmf9I8brKAzkj/view?usp=sharing'
+model_path='trained_plant_disease_model.keras'
 
-# Load the trained model
-model_path = "https://drive.google.com/file/d/1em_4pDcMztrkxm1gH0WWmf9I8brKAzkj/view?usp=drive_link"
+
+if not os.path.exists(model_path):
+    st.warning("Downloading model from Google Drive...")
+    gdown.download(url, model_path,quiet=False)
 model = tf.keras.models.load_model(model_path)
 
 # Define class labels for potato leaf diseases
