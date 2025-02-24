@@ -4,8 +4,8 @@ import numpy as np
 import gdown
 import os
 
-file_id = "1em_4pDcMztrkxm1gH0WWmf9I8brKAzkj"
-url = 'https://drive.google.com/file/d/1em_4pDcMztrkxm1gH0WWmf9I8brKAzkj/view?usp=sharing'
+file_id = "1_9Q28QeJXnyRCH18IVxpX5KhuDtZC40c"
+url = 'https://drive.google.com/uc?id=1_9Q28QeJXnyRCH18IVxpX5KhuDtZC40c'
 model_path = "trained_plant_disease_model.keras"
 
 
@@ -29,12 +29,10 @@ app_mode = st.sidebar.selectbox("Select Page",["HOME","DISEASE RECOGNITION"])
 #app_mode = st.sidebar.selectbox("Select Page",["Home"," ","Disease Recognition"])
 
 # import Image from pillow to open images
-from PIL import Image
-img = Image.open("Diseases.png")
+
 
 # display image using streamlit
 # width is used to set the width of an image
-st.image(img)
 
 #Main Page
 if(app_mode=="HOME"):
